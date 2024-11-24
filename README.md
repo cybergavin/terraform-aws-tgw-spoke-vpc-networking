@@ -1,7 +1,23 @@
 # Terraform module : `workload-spoke-vpc`
-This Terraform module sets up basic networking in a workload spoke VPC on AWS, where all ingress/egress traffic enters/exits the VPC via a transit gateway in another AWS account.
+This Terraform module sets up basic networking in a workload spoke VPC on AWS, where all ingress/egress traffic enters/exits the VPC via a transit gateway in another AWS account.  
+This module uses the [`cloudposse/null/label`](https://registry.terraform.io/modules/cloudposse/label/null/latest) terraform module to use a consistent naming convention for provisioned resources.
 
 ![](VIEWME.png "AWS Hub-Spoke")
+
+## Features
+- Provisions the following network infrastructure:
+  - VPCs and subnets
+  - TGW share acceptance and TGW attachments
+  - Route tables with local and TGW-bound routes
+  - DHCP options set with custom DNS settings
+  - Security Groups for workloads
+- Leverages the cloudposse terraform-null-label module to assign standardized names to provisioned resources.
+- Applies tags consistently to provisioned resources.
+
+## Requirements
+
+- The TGW set up in the `network services` AWS account must be shared with the `workload` AWS account via Resource Access Manager (RAM) and the `TGW share ARN` must be made available. Ideally, if the TGW share is automated via Terraform, then the ARN may be accessed from Terraform state.
+- The `TGW ID` must be made available. Ideally, if the TGW provisioning is automated via Terraform, then the TGW ID may be accessed from Terraform state.
 
 
 ## Providers
