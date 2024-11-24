@@ -1,0 +1,26 @@
+cloud-architecture-diagram
+
+// Define groups and nodes
+Internet [icon: cloud]
+Network-Services [icon: aws] {
+    VPC-Network-Services [icon: aws-vpc, color: red] {
+        Subnet-pub [icon: aws-subnet-public]
+        Subnet-pvt [icon: aws-subnet-private]
+        InternetGateway [icon: aws-internet-gateway]
+    }
+    TransitGateway [icon: aws-transit-gateway]
+}
+Workload-Spoke [icon: aws] {
+    VPC-Workload-Spoke [icon: aws-vpc, color: green] {
+        Subnet-pvt-app-web [icon: aws-subnet-private]
+        Subnet-pvt-app-db [icon: aws-subnet-private]
+        SecurityGroups [icon: aws-security-group]
+        RouteTables [icon: aws-route-table]
+    }
+}
+
+
+// Define connections
+Internet <> InternetGateway <> Subnet-pub
+VPC-Network-Services <> TransitGateway
+TransitGateway <> VPC-Workload-Spoke
