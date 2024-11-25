@@ -2,12 +2,12 @@ output "vpc_id" {
   value = aws_vpc.this.id
 }
 
-# output "subnets" {
-#   value = [ for key, subnet in aws_subnet.this : this.id ]
-#   description = "List of subnets with IDs"
-# }
+output "subnets" {
+  value       = aws_subnet.this
+  description = "Map of subnets"
+}
 
-# output "sg" {
-#   value = [ for key, sg in aws_security_group.this : this.id ]
-#   description = "List of security groups with IDs"
-# }
+output "security_groups" {
+  value       = aws_security_group.this
+  description = "Map of security groups"
+}
