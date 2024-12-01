@@ -14,12 +14,14 @@ locals {
   azs      = data.aws_availability_zones.current.names
   az_count = length(local.azs)
 
-  # Create a list of TGW subnet IDs
-  tgw_subnets = [
-    for subnet in aws_subnet.this :
-    subnet.id
-    if can(regex("tgw", lookup(subnet.tags, "Name", "")))
-  ]
+  # Group subnets by AZ
+  subnets_by_az = {
+    for az in distinct([for subnet in aws_subnet.this : subnet.availability_zone]) :
+    az => [for subnet in aws_subnet.this : subnet.id if subnet.availability_zone == az]
+  }
+
+  # Select the first subnet from each AZ for the TGW attachment
+  tgw_subnets = [for az, subnets in local.subnets_by_az : subnets[0]]
 
   # Create a unique subnet configuration based on provided subnets
   subnet_configs = flatten([
@@ -92,12 +94,16 @@ resource "aws_subnet" "this" {
 
 # Accept the Transit Gateway Share invitation
 resource "aws_ram_resource_share_accepter" "this" {
-  share_arn = var.shared_transit_gateway_arn
+  for_each = var.tgw_sharing_enabled ? { "enabled_tgw" = var.shared_transit_gateway_arn } : {}
+
+  share_arn = each.value
 }
 
 # Create Transit Gateway attachment
 resource "aws_ec2_transit_gateway_vpc_attachment" "this" {
-  transit_gateway_id = var.transit_gateway_id
+  for_each = var.tgw_sharing_enabled ? { "enabled_tgw" = var.transit_gateway_id } : {}
+
+  transit_gateway_id = each.value
   vpc_id             = aws_vpc.this.id
   subnet_ids         = local.tgw_subnets
   tags = merge(

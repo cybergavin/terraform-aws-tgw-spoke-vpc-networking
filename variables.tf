@@ -79,3 +79,14 @@ variable "dns_domain" {
   description = "Domain name for DHCP option set"
   type        = string
 }
+
+variable "tgw_sharing_enabled" {
+  description = "Enable or disable the Transit Gateway sharing and attachment resources. Set to true to create the resources."
+  type        = bool
+  default     = false
+
+  validation {
+    condition     = var.tgw_sharing_enabled == true || var.tgw_sharing_enabled == false
+    error_message = "The tgw_sharing_enabled variable must be a boolean value (true or false)."
+  }
+}
