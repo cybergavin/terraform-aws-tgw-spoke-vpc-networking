@@ -66,7 +66,7 @@ def main():
     Main entry point for the script.
     """
     # Define the module directories to process
-    module_dirs = ["tgw-spoke-vpc"]  # List of module directories
+    module_dirs = ["."]  # List of module directories within this repo. Use "." for a single repo module.
 
     # Ensure the script is run from the repository root
     repo_root = Path(subprocess.run(["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True).stdout.strip())

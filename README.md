@@ -1,12 +1,13 @@
-# Terraform module : `workload-spoke-vpc`
-This Terraform module sets up basic networking in a workload spoke VPC on AWS, where all ingress/egress traffic enters/exits the VPC via a transit gateway in another AWS account.  
+<!-- BEGIN_TF_DOCS -->
+# Terraform module : `tgw-spoke-vpc-networking`
+This OpenTofu module provisions foundational networking infrastructure in **spoke VPCs** that host business applications or workloads. It helps to quickly set up basic networking required by workloads in a multi-account hub-spoke network topology on AWS, where all ingress and egress traffic to/from the spoke VPC passes through a *hub* VPC (in another AWS account) via a Transit Gateway (TGW).  
 This module uses the [`cloudposse/null/label`](https://registry.terraform.io/modules/cloudposse/label/null/latest) terraform module to use a consistent naming convention for provisioned resources.
 
 ![](VIEWME.png "AWS Hub-Spoke")
 
 ## Features
-- Provisions the following network infrastructure:
-  - VPCs and subnets
+- Provisions the following network infrastructure in a spoke AWS account:
+  - A VPC with subnets
   - TGW share acceptance and TGW attachments
   - Route tables with local and TGW-bound routes
   - DHCP options set with custom DNS settings
@@ -16,15 +17,29 @@ This module uses the [`cloudposse/null/label`](https://registry.terraform.io/mod
 
 ## Requirements
 
-- The TGW set up in the `network services` AWS account must be shared with the `workload` AWS account via Resource Access Manager (RAM) and the `TGW share ARN` must be made available. Ideally, if the TGW share is automated via Terraform, then the ARN may be accessed from Terraform state.
-- The `TGW ID` must be made available. Ideally, if the TGW provisioning is automated via Terraform, then the TGW ID may be accessed from Terraform state.
+- The TGW set up in the `network services` AWS account must be shared with the `workload` AWS account via Resource Access Manager (RAM) and the `TGW share ARN` must be made available. Ideally, if the TGW share is automated via OpenTofu, then the ARN may be accessed from OpenTofu state.
+- The `TGW ID` must be made available. Ideally, if the TGW provisioning is automated via OpenTofu, then the TGW ID may be accessed from OpenTofu state.
 
 
-## Providers
+## Usage
 
-| Name | Version |
-|------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | n/a |
+```hcl
+module "example" {
+  source                     = "cybergavin/tgw-spoke-vpc-networking/aws"
+  version                    = "1.0.0"
+  org                        = var.org
+  app_id                     = var.app_id
+  environment                = var.environment
+  vpc_cidr                   = var.vpc_cidr
+  shared_transit_gateway_arn = var.shared_transit_gateway_arn
+  transit_gateway_id         = var.transit_gateway_id
+  subnet_cidrs               = var.subnet_cidrs
+  dns_servers                = var.dns_servers
+  dns_domain                 = var.dns_domain
+  security_groups            = var.security_groups
+  global_tags                = var.global_tags
+}
+```
 
 ## Modules
 
@@ -37,6 +52,12 @@ This module uses the [`cloudposse/null/label`](https://registry.terraform.io/mod
 | <a name="module_networking_subnet_label"></a> [networking\_subnet\_label](#module\_networking\_subnet\_label) | cloudposse/label/null | 0.25.0 |
 | <a name="module_networking_tgw_attachment_label"></a> [networking\_tgw\_attachment\_label](#module\_networking\_tgw\_attachment\_label) | cloudposse/label/null | 0.25.0 |
 | <a name="module_networking_vpc_label"></a> [networking\_vpc\_label](#module\_networking\_vpc\_label) | cloudposse/label/null | 0.25.0 |
+
+## Providers
+
+| Name | Version |
+|------|---------|
+| <a name="provider_aws"></a> [aws](#provider\_aws) | n/a |
 
 ## Resources
 
@@ -70,6 +91,7 @@ This module uses the [`cloudposse/null/label`](https://registry.terraform.io/mod
 | <a name="input_security_groups"></a> [security\_groups](#input\_security\_groups) | List of security groups with associated ingress and egress rules | <pre>list(object({<br/>    alias       = string<br/>    description = string<br/>    ingress = list(object({<br/>      description = string<br/>      cidr_ipv4   = string<br/>      ip_protocol = string<br/>      from_port   = optional(number) # optional for cases like `-1` protocol<br/>      to_port     = optional(number) # optional for cases like `-1` protocol<br/>    }))<br/>    egress = list(object({<br/>      description = string<br/>      cidr_ipv4   = string<br/>      ip_protocol = string<br/>      from_port   = optional(number) # optional for cases like `-1` protocol<br/>      to_port     = optional(number) # optional for cases like `-1` protocol<br/>    }))<br/>  }))</pre> | n/a | yes |
 | <a name="input_shared_transit_gateway_arn"></a> [shared\_transit\_gateway\_arn](#input\_shared\_transit\_gateway\_arn) | The ARN of the Ingress network account's shared Transit Gateway. TBD: Obtain output from another tofu module. | `string` | n/a | yes |
 | <a name="input_subnet_cidrs"></a> [subnet\_cidrs](#input\_subnet\_cidrs) | Map of subnet aliases to a list of CIDR blocks for each component across multiple AZs | `map(list(string))` | n/a | yes |
+| <a name="input_tgw_sharing_enabled"></a> [tgw\_sharing\_enabled](#input\_tgw\_sharing\_enabled) | Enable or disable the Transit Gateway sharing and attachment resources. Set to true to create the resources. | `bool` | `false` | no |
 | <a name="input_transit_gateway_id"></a> [transit\_gateway\_id](#input\_transit\_gateway\_id) | Transit Gateway ID for the peering connection. TBD: Obtain output from another tofu module. | `string` | n/a | yes |
 | <a name="input_vpc_cidr"></a> [vpc\_cidr](#input\_vpc\_cidr) | The CIDR block for the MFT VPC | `string` | n/a | yes |
 
@@ -77,4 +99,7 @@ This module uses the [`cloudposse/null/label`](https://registry.terraform.io/mod
 
 | Name | Description |
 |------|-------------|
-| <a name="output_vpc_id"></a> [vpc\_id](#output\_vpc\_id) | n/a |
+| <a name="output_security_groups"></a> [security\_groups](#output\_security\_groups) | Map of security groups |
+| <a name="output_subnets"></a> [subnets](#output\_subnets) | Map of subnets |
+| <a name="output_vpc_id"></a> [vpc\_id](#output\_vpc\_id) | VPC ID |
+<!-- END_TF_DOCS -->
