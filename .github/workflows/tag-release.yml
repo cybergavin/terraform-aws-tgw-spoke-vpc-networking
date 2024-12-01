@@ -1,4 +1,4 @@
-name: Auto Tagging for OpenTofu Modules
+name: Auto Tagging for OpenTofu/Terraform Modules
 
 on:
   push:
@@ -107,8 +107,8 @@ jobs:
           if [[ "$pr_title" =~ ^\(release\) ]]; then
             # For releases, increment major or minor (customize as needed)
             version_tag="v$((major + 1)).0.0"  # Example: major bump
-          elif [[ "$pr_title" =~ ^\(feature\) ]]; then
-            # For features, increment minor version
+          elif [[ "$pr_title" =~ ^\(feature|patch\) ]]; then
+            # For features or patches, increment minor version
             version_tag="v${major}.$((minor + 1)).0"
           elif [[ "$pr_title" =~ ^\(bug\) ]]; then
             # For bugs, increment patch version
