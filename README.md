@@ -1,6 +1,6 @@
 <!-- BEGIN_TF_DOCS -->
 # Terraform module : `tgw-spoke-vpc-networking`
-This OpenTofu module provisions foundational networking infrastructure in **spoke VPCs** that host business applications or workloads. It helps to quickly set up basic networking required by workloads in a multi-account hub-spoke network topology on AWS, where all ingress and egress traffic to/from the spoke VPC passes through a *hub* VPC (in another AWS account) via a Transit Gateway (TGW).  
+This Terraform module provisions foundational networking infrastructure in **spoke VPCs** that host business applications or workloads. It helps to quickly set up basic networking required by workloads in a multi-account hub-spoke network topology on AWS, where all ingress and egress traffic to/from the spoke VPC passes through a *hub* VPC (in another AWS account) via a Transit Gateway (TGW).  
 This module uses the [`cloudposse/null/label`](https://registry.terraform.io/modules/cloudposse/label/null/latest) terraform module to use a consistent naming convention for provisioned resources.
 
 ![](VIEWME.png "AWS Hub-Spoke")
@@ -17,8 +17,8 @@ This module uses the [`cloudposse/null/label`](https://registry.terraform.io/mod
 
 ## Requirements
 
-- The TGW set up in the `network services` AWS account must be shared with the `workload` AWS account via Resource Access Manager (RAM) and the `TGW share ARN` must be made available. Ideally, if the TGW share is automated via OpenTofu, then the ARN may be accessed from OpenTofu state.
-- The `TGW ID` must be made available. Ideally, if the TGW provisioning is automated via OpenTofu, then the TGW ID may be accessed from OpenTofu state.
+- The TGW set up in the `network services` AWS account must be shared with the `workload` AWS account via Resource Access Manager (RAM) and the `TGW share ARN` must be made available. Ideally, if the TGW share is automated via Terraform, then the ARN may be accessed from Terraform state.
+- The `TGW ID` must be made available. Ideally, if the TGW provisioning is automated via Terraform, then the TGW ID may be accessed from Terraform state.
 
 
 ## Usage
@@ -26,7 +26,7 @@ This module uses the [`cloudposse/null/label`](https://registry.terraform.io/mod
 ```hcl
 module "example" {
   source                     = "cybergavin/tgw-spoke-vpc-networking/aws"
-  version                    = "1.0.0"
+  version                    = "2.3.0"
   org                        = var.org
   app_id                     = var.app_id
   environment                = var.environment
@@ -87,12 +87,12 @@ module "example" {
 | <a name="input_dns_servers"></a> [dns\_servers](#input\_dns\_servers) | List of custom DNS servers to use (e.g., Bluecat) | `list(string)` | n/a | yes |
 | <a name="input_environment"></a> [environment](#input\_environment) | Environment (poc, dev, tst, stg, prod) | `string` | n/a | yes |
 | <a name="input_global_tags"></a> [global\_tags](#input\_global\_tags) | A map of global tags to apply to all resources | `map(string)` | `{}` | no |
-| <a name="input_org"></a> [org](#input\_org) | A name or abbreviation for the Organization. Must not contain blankspaces and special characters. | `string` | `"usc-its"` | no |
+| <a name="input_org"></a> [org](#input\_org) | A name or abbreviation for the Organization. Must not contain blankspaces and special characters. | `string` | `"xyz"` | no |
 | <a name="input_security_groups"></a> [security\_groups](#input\_security\_groups) | List of security groups with associated ingress and egress rules | <pre>list(object({<br/>    alias       = string<br/>    description = string<br/>    ingress = list(object({<br/>      description = string<br/>      cidr_ipv4   = string<br/>      ip_protocol = string<br/>      from_port   = optional(number) # optional for cases like `-1` protocol<br/>      to_port     = optional(number) # optional for cases like `-1` protocol<br/>    }))<br/>    egress = list(object({<br/>      description = string<br/>      cidr_ipv4   = string<br/>      ip_protocol = string<br/>      from_port   = optional(number) # optional for cases like `-1` protocol<br/>      to_port     = optional(number) # optional for cases like `-1` protocol<br/>    }))<br/>  }))</pre> | n/a | yes |
-| <a name="input_shared_transit_gateway_arn"></a> [shared\_transit\_gateway\_arn](#input\_shared\_transit\_gateway\_arn) | The ARN of the Ingress network account's shared Transit Gateway. TBD: Obtain output from another tofu module. | `string` | n/a | yes |
+| <a name="input_shared_transit_gateway_arn"></a> [shared\_transit\_gateway\_arn](#input\_shared\_transit\_gateway\_arn) | The ARN of the Ingress network account's shared Transit Gateway. TBD: Obtain output from another terraform module. | `string` | n/a | yes |
 | <a name="input_subnet_cidrs"></a> [subnet\_cidrs](#input\_subnet\_cidrs) | Map of subnet aliases to a list of CIDR blocks for each component across multiple AZs | `map(list(string))` | n/a | yes |
 | <a name="input_tgw_sharing_enabled"></a> [tgw\_sharing\_enabled](#input\_tgw\_sharing\_enabled) | Enable or disable the Transit Gateway sharing and attachment resources. Set to true to create the resources. | `bool` | `false` | no |
-| <a name="input_transit_gateway_id"></a> [transit\_gateway\_id](#input\_transit\_gateway\_id) | Transit Gateway ID for the peering connection. TBD: Obtain output from another tofu module. | `string` | n/a | yes |
+| <a name="input_transit_gateway_id"></a> [transit\_gateway\_id](#input\_transit\_gateway\_id) | Transit Gateway ID for the peering connection. TBD: Obtain output from another terraform module. | `string` | n/a | yes |
 | <a name="input_vpc_cidr"></a> [vpc\_cidr](#input\_vpc\_cidr) | The CIDR block for the MFT VPC | `string` | n/a | yes |
 
 ## Outputs
