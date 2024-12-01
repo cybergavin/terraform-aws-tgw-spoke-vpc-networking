@@ -1,7 +1,7 @@
 variable "org" {
   description = "A name or abbreviation for the Organization. Must not contain blankspaces and special characters."
   type        = string
-  default     = "usc-its"
+  default     = "xyz"
 }
 
 variable "app_id" {
@@ -61,12 +61,12 @@ variable "security_groups" {
   }))
 }
 variable "shared_transit_gateway_arn" {
-  description = "The ARN of the Ingress network account's shared Transit Gateway. TBD: Obtain output from another tofu module."
+  description = "The ARN of the Ingress network account's shared Transit Gateway. TBD: Obtain output from another terraform module."
   type        = string
 }
 
 variable "transit_gateway_id" {
-  description = "Transit Gateway ID for the peering connection. TBD: Obtain output from another tofu module."
+  description = "Transit Gateway ID for the peering connection. TBD: Obtain output from another terraform module."
   type        = string
 }
 
