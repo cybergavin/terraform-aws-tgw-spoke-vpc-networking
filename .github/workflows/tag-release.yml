@@ -1,4 +1,4 @@
-name: Auto Tagging for module versioning
+name: Auto Tagging for OpenTofu Modules
 
 on:
   push:
