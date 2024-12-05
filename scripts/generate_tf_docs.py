@@ -8,19 +8,24 @@ from pathlib import Path
 
 def check_terraform_docs_installed():
     """
-    Check if `terraform-docs` is installed. If not, install it using pipx.
+    Check if Terraform-docs is installed.
     """
     try:
-        subprocess.run(["terraform-docs", "--version"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        print("terraform-docs is already installed.")
+        result = subprocess.run(
+            ["terraform-docs", "--version"], 
+            check=True, 
+            stdout=subprocess.DEVNULL, 
+            stderr=subprocess.DEVNULL
+        )
+        print("Terraform-docs is installed.")
+    except FileNotFoundError:
+        print("Terraform-docs is not installed: command not found.")
+    except subprocess.CalledProcessError as e:
+        print(f"Terraform-docs installation check failed with exit code {e.returncode}.")
     except Exception as e:
-        print(f"Encountered exception when determining if terraform-docs is installed. {e} . Installing it now...")
-        try:
-            subprocess.run(["pip", "install", "terraform-docs"], check=True)
-            print("terraform-docs installed successfully.")
-        except Exception as e:
-            print(f"Error installing terraform-docs: {e}")
-            sys.exit(1)
+        print(f"An unexpected error occurred: {e}")
+        sys.exit(1)
+
 
 
 def generate_documentation(module_dirs):
