@@ -46,7 +46,7 @@ security_groups = [
   },
   {
     alias       = "sqldb"
-    description = "Security group for MFT DB servers"
+    description = "Security group for Sales DB servers"
     ingress = [
       {
         description = "Allow Web traffic"
