@@ -1,7 +1,7 @@
 # Sales Account Networking
 module "sales-network" {
   source                     = "cybergavin/tgw-spoke-vpc-networking/aws"
-  version                    = "2.0.0"
+  version                    = "3.0.0"
   org                        = var.org
   app_id                     = var.app_id
   environment                = var.environment

@@ -25,7 +25,7 @@ This module uses the [`cloudposse/null/label`](https://registry.terraform.io/mod
 ```hcl
 module "example" {
   source                     = "cybergavin/tgw-spoke-vpc-networking/aws"
-  version                    = "2.3.0"
+  version                    = "x.y.z" # Use latest
   org                        = var.org
   app_id                     = var.app_id
   environment                = var.environment
